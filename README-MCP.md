@@ -308,7 +308,7 @@ Analiza consultas y detecta su tipo automáticamente.
       "command": "python",
       "args": ["-m", "geofinder.mcp_server"],
       "env": {
-        "ICGC_URL": "https://eines.icgc.cat/geocodificador"
+        "ICGC_URL": "https://eines.icgc.cat"
       }
     }
   }
@@ -360,7 +360,7 @@ Crea `.env` en el directorio del proyecto:
 
 ```bash
 # Servicio ICGC
-ICGC_URL=https://eines.icgc.cat/geocodificador
+ICGC_URL=https://eines.icgc.cat
 GEOFINDER_TIMEOUT=5
 
 # FastMCP
@@ -373,7 +373,7 @@ FASTMCP_MASK_ERROR_DETAILS=False
 
 | Variable | Descripción | Default |
 |----------|-------------|---------|
-| `ICGC_URL` | URL del geocodificador | `https://eines.icgc.cat/geocodificador` |
+| `ICGC_URL` | URL del geocodificador | `https://eines.icgc.cat` |
 | `GEOFINDER_TIMEOUT` | Timeout peticiones (s) | `5` |
 | `FASTMCP_LOG_LEVEL` | Nivel logging | `INFO` |
 | `FASTMCP_MASK_ERROR_DETAILS` | Ocultar errores | `False` |
