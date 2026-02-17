@@ -8,7 +8,7 @@ from geofinder import GeoFinder
 @pytest.fixture
 def gf():
     """Create a GeoFinder instance for testing."""
-    return GeoFinder(icgc_url="https://eines.icgc.cat/geocodificador")
+    return GeoFinder(icgc_url="https://eines.icgc.cat")
 
 
 class MockResponseGenerator:

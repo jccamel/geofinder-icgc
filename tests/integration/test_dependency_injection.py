@@ -104,7 +104,7 @@ class TestGeoFinderDI:
         external_client = httpx.AsyncClient()
 
         gf = GeoFinder(
-            icgc_url="https://eines.icgc.cat/geocodificador",
+            icgc_url="https://eines.icgc.cat",
             http_client=external_client
         )
 
@@ -125,7 +125,7 @@ class TestGeoFinderDI:
     @pytest.mark.asyncio
     async def test_geofinder_creates_own_client(self):
         """Verifica que GeoFinder crea su propio cliente por defecto."""
-        gf = GeoFinder(icgc_url="https://eines.icgc.cat/geocodificador")
+        gf = GeoFinder(icgc_url="https://eines.icgc.cat")
 
         # Obtener el cliente Pelias
         pelias_client = await gf.get_icgc_client()
@@ -147,11 +147,11 @@ class TestGeoFinderDI:
         shared_client = httpx.AsyncClient()
 
         gf1 = GeoFinder(
-            icgc_url="https://eines.icgc.cat/geocodificador",
+            icgc_url="https://eines.icgc.cat",
             http_client=shared_client
         )
         gf2 = GeoFinder(
-            icgc_url="https://eines.icgc.cat/geocodificador",
+            icgc_url="https://eines.icgc.cat",
             http_client=shared_client
         )
 
@@ -176,7 +176,7 @@ class TestGeoFinderDI:
         external_client = httpx.AsyncClient()
 
         async with GeoFinder(
-            icgc_url="https://eines.icgc.cat/geocodificador",
+            icgc_url="https://eines.icgc.cat",
             http_client=external_client
         ) as gf:
             pelias = await gf.get_icgc_client()
@@ -191,7 +191,7 @@ class TestGeoFinderDI:
     @pytest.mark.asyncio
     async def test_geofinder_context_manager_with_own_client(self):
         """Verifica que el context manager cierra el cliente propio."""
-        gf = GeoFinder(icgc_url="https://eines.icgc.cat/geocodificador")
+        gf = GeoFinder(icgc_url="https://eines.icgc.cat")
         pelias = await gf.get_icgc_client()
         client = pelias.client
 
@@ -209,7 +209,7 @@ class TestDIBackwardCompatibility:
     async def test_existing_code_still_works(self):
         """Verifica que código existente sin DI sigue funcionando."""
         # Código antiguo sin cambios
-        gf = GeoFinder(icgc_url="https://eines.icgc.cat/geocodificador")
+        gf = GeoFinder(icgc_url="https://eines.icgc.cat")
         pelias = await gf.get_icgc_client()
 
         assert pelias.client is not None
