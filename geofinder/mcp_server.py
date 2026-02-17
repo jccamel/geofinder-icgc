@@ -73,7 +73,7 @@ def get_geofinder() -> GeoFinder:
     global _geofinder_instance
 
     if _geofinder_instance is None:
-        icgc_url = "https://eines.icgc.cat/geocodificador"
+        icgc_url = os.getenv("ICGC_URL", "https://eines.icgc.cat")
         timeout = int(os.getenv("GEOFINDER_TIMEOUT", "5"))
 
         logger.info(

@@ -92,8 +92,7 @@ async def test_context_manager():
     from geofinder.pelias import PeliasClient
 
     try:
-        async with PeliasClient("https://eines.icgc.cat/geocodificador",
-                                 default_search_call="cerca") as client:
+        async with PeliasClient("https://eines.icgc.cat") as client:
             result = await client.geocode("Barcelona", size=1)
             if result.get("features"):
                 print("✅ Context manager funciona correctamente")

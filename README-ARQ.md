@@ -86,9 +86,11 @@
               │   Servidor ICGC           │
               │   Pelias API              │
               │                           │
-              │  /cerca                   │
-              │  /invers                  │
-              │  /autocompletar           │
+              │   Pelias API              │
+              │                           │
+              │  /geocodificador/cerca    │
+              │  /geocodificador/invers   │
+              │  /geocodificador/...      │
               └───────────────────────────┘
 ```
 
@@ -111,9 +113,9 @@
 
 | Método | Descripción | Endpoint |
 |--------|-------------|----------|
-| `async geocode(query, **params)` | Búsqueda general (texto → coordenadas) | `/cerca` |
-| `async reverse(lat, lon, **params)` | Geocodificación inversa (coords → lugar) | `/invers` |
-| `async autocomplete(query, **params)` | Sugerencias de autocompletado | `/autocompletar` |
+| `async geocode(query, **params)` | Búsqueda general (texto → coordenadas) | `/geocodificador/cerca` |
+| `async reverse(lat, lon, **params)` | Geocodificación inversa (coords → lugar) | `/geocodificador/invers` |
+| `async autocomplete(query, **params)` | Sugerencias de autocompletado | `/geocodificador/autocompletar` |
 | `async call(endpoint, **params)` | Ejecuta petición HTTP genérica | Variable |
 | `last_sent()` | Retorna última URL ejecutada (debug) | - |
 | `async close()` | Cierra cliente httpx | - |
@@ -255,7 +257,7 @@ Usuario/IA
     ↓
 [PeliasClient] geocode("Carrer Diagonal 100, Barcelona", layers="address")
     ↓
-[PeliasClient] call("/cerca", text="...", layers="address")
+[PeliasClient] call("/geocodificador/cerca", text="...", layers="address")
     ↓
 [HTTP GET] https://eines.icgc.cat/geocodificador/cerca?text=Carrer+Diagonal+100,+Barcelona&layers=address
     ↓
@@ -276,13 +278,13 @@ Usuario/IA
 
 | Herramienta MCP | Método GeoFinder | Método PeliasClient | Endpoint ICGC | Parámetros Clave |
 |-----------------|------------------|---------------------|---------------|------------------|
-| `find_place()` | `find()` | `geocode()` | `/cerca` | `text`, `layers` |
-| `autocomplete()` | `autocomplete()` | `autocomplete()` | `/autocompletar` | `text`, `size` |
-| `find_reverse()` | `find_reverse()` | `reverse()` | `/invers` | `lat`, `lon`, `layers`, `size` |
-| `find_by_coordinates()` | `_find_point_coordinate_icgc()` | `reverse()` | `/invers` | `lat`, `lon`, `boundary.circle.radius` |
-| `find_address()` | `_find_address()` | `geocode()` | `/cerca` | `text="Carrer..."`, `layers="address"` |
-| `find_road_km()` | `_find_road()` | `geocode()` | `/cerca` | `text="C-32 10"`, `layers="pk"` |
-| `search_nearby()` | `find()` + `_find_point_coordinate_icgc()` | `geocode()` + `reverse()` | `/cerca` + `/invers` | Combinado |
+| `find_place()` | `find()` | `geocode()` | `/geocodificador/cerca` | `text`, `layers` |
+| `autocomplete()` | `autocomplete()` | `autocomplete()` | `/geocodificador/autocompletar` | `text`, `size` |
+| `find_reverse()` | `find_reverse()` | `reverse()` | `/geocodificador/invers` | `lat`, `lon`, `layers`, `size` |
+| `find_by_coordinates()` | `_find_point_coordinate_icgc()` | `reverse()` | `/geocodificador/invers` | `lat`, `lon`, `boundary.circle.radius` |
+| `find_address()` | `_find_address()` | `geocode()` | `/geocodificador/cerca` | `text="Carrer..."`, `layers="address"` |
+| `find_road_km()` | `_find_road()` | `geocode()` | `/geocodificador/cerca` | `text="C-32 10"`, `layers="pk"` |
+| `search_nearby()` | `find()` + `_find_point_coordinate_icgc()` | `geocode()` + `reverse()` | `/geocodificador/cerca` + `/geocodificador/invers` | Combinado |
 | `transform_coordinates()` | `transform_point()` | ❌ NO USA | - | Solo transformación local |
 | `parse_search_query()` | `_parse_*()` | ❌ NO USA | - | Solo parsing con regex |
 
@@ -292,7 +294,7 @@ Usuario/IA
 
 El servidor Pelias del ICGC expone **3 endpoints principales**:
 
-### 1. `/cerca` - Búsqueda General (Geocodificación)
+### 1. `/geocodificador/cerca` - Búsqueda General (Geocodificación)
 
 **Método PeliasClient:** `geocode(query, **params)`
 
@@ -305,20 +307,20 @@ El servidor Pelias del ICGC expone **3 endpoints principales**:
 ```python
 # Topónimo
 client.geocode("Barcelona")
-# → GET /cerca?text=Barcelona
+# → GET /geocodificador/cerca?text=Barcelona
 
 # Dirección
 client.geocode("Carrer Diagonal 100, Barcelona", layers="address")
-# → GET /cerca?text=Carrer+Diagonal+100,+Barcelona&layers=address
+# → GET /geocodificador/cerca?text=Carrer+Diagonal+100,+Barcelona&layers=address
 
 # Carretera
 client.geocode("C-32 10", layers="pk")
-# → GET /cerca?text=C-32+10&layers=pk
+# → GET /geocodificador/cerca?text=C-32+10&layers=pk
 ```
 
 ---
 
-### 2. `/invers` - Geocodificación Inversa
+### 2. `/geocodificador/invers` - Geocodificación Inversa
 
 **Método PeliasClient:** `reverse(lat, lon, **params)`
 
@@ -333,16 +335,16 @@ client.geocode("C-32 10", layers="pk")
 ```python
 # Básico
 client.reverse(41.3851, 2.1734)
-# → GET /invers?lat=41.3851&lon=2.1734
+# → GET /geocodificador/invers?lat=41.3851&lon=2.1734
 
 # Con radio y capas
 client.reverse(41.3851, 2.1734, layers="address,tops", size=10, **{"boundary.circle.radius": 0.05})
-# → GET /invers?lat=41.3851&lon=2.1734&layers=address,tops&size=10&boundary.circle.radius=0.05
+# → GET /geocodificador/invers?lat=41.3851&lon=2.1734&layers=address,tops&size=10&boundary.circle.radius=0.05
 ```
 
 ---
 
-### 3. `/autocompletar` - Autocompletado
+### 3. `/geocodificador/autocompletar` - Autocompletado
 
 **Método PeliasClient:** `autocomplete(query, **params)`
 
@@ -354,7 +356,7 @@ client.reverse(41.3851, 2.1734, layers="address,tops", size=10, **{"boundary.cir
 ```python
 # Autocompletado básico
 client.autocomplete("Barcel", size=10)
-# → GET /autocompletar?text=Barcel&size=10
+# → GET /geocodificador/autocompletar?text=Barcel&size=10
 ```
 
 ---
@@ -496,9 +498,9 @@ GET https://eines.icgc.cat/geocodificador/cerca?text=C-32+10&layers=pk
 ### ✅ Solo 3 Endpoints Reales
 
 Aunque hay 9 herramientas MCP, todas usan solo:
-- `/cerca` (búsqueda general)
-- `/invers` (geocodificación inversa)
-- `/autocompletar` (sugerencias)
+- `/geocodificador/cerca` (búsqueda general)
+- `/geocodificador/invers` (geocodificación inversa)
+- `/geocodificador/autocompletar` (sugerencias)
 
 ### ✅ Inteligencia en la Capa de Negocio
 
