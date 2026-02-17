@@ -59,7 +59,7 @@ class GeoFinder:
     def __init__(
         self,
         logger: logging.Logger | None = None,
-        icgc_url: str = "https://eines.icgc.cat/geocodificador",
+        icgc_url: str = "https://eines.icgc.cat",
         timeout: float = 5.0,
         verify_ssl: bool = True,
         cache_size: int = 128,
@@ -124,9 +124,6 @@ class GeoFinder:
                     self._icgc_client = PeliasClient(
                         self._icgc_url,
                         self.timeout,
-                        default_search_call="cerca",
-                        default_reverse_call="invers",
-                        default_autocomplete_call="autocompletar",
                         max_retries=self._max_retries,
                         retry_base_delay=self._retry_base_delay,
                         retry_max_delay=self._retry_max_delay,
